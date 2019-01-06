@@ -7,6 +7,7 @@ namespace QEdit {
     static class Program {
 
         public static List<Substitution> subs;
+        public static string substitutionsFile = "substitutions.txt";
 
         /// <summary>
         /// The main entry point for the application.
@@ -22,7 +23,7 @@ namespace QEdit {
 
         public static List<Substitution> loadSubstitutions() {
             List<Substitution> result = new List<Substitution>();
-            string[] lines = File.ReadAllLines("substitutions.txt");
+            string[] lines = File.ReadAllLines(substitutionsFile);
 
             List<List<string>> lineWords = new List<List<string>>();
             int lastLine = 0;

@@ -137,6 +137,16 @@ namespace QEdit
                 e.Handled = true;
             }
 
+            if (e.Control && e.KeyCode == Keys.D9) {
+                openFileDialog1.ShowDialog();
+            }
+
+        }
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e) {
+            Program.substitutionsFile = openFileDialog1.FileName;
+            Program.subs = Program.loadSubstitutions();
+            update();
         }
     }
 }

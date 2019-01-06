@@ -104,6 +104,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="substitutions-cpp.txt" />
     <Content Include="substitutions.txt" />
   </ItemGroup>
   <ItemGroup>
