@@ -9,6 +9,12 @@ namespace QEdit {
         public static List<Substitution> subs;
         public static string substitutionsFile = "substitutions.txt";
 
+        public static readonly int low = 0, title = 1, high = 2, concat = 3, snake = 4, hyphen = 5;
+
+        public static int defaultFirstCase = low, defaultCase = title, defaultGlue = concat;
+
+        public static bool debugWords = false;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -78,7 +84,7 @@ namespace QEdit {
         }
 
         public static bool isIdentifier(char c) {
-            return c == '$' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+            return c == '$' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '\'';
         }
 
         public static bool isNumeric(char c) {
@@ -240,7 +246,16 @@ namespace QEdit {
                         result.RemoveAll((x) => x == "$_");
                         insertionPoint = result.Count;
                     } else if (token == "$eol") {
-                        while (insertionPoint < result.Count && result[insertionPoint] != "$line") insertionPoint++;
+                        while (insertionPoint < result.Count && result[insertionPoint] != "$line") {
+                            if (result[insertionPoint] == "$_") {
+                                while (insertionPoint < result.Count && result[insertionPoint] == "$_") result.RemoveAt(insertionPoint);
+                            } else {
+                                insertionPoint++;
+                            }
+                        }
+                        if (insertionPoint > 0 && (result[insertionPoint - 1] == "$down" || result[insertionPoint - 1] == "$up")) {
+                            insertionPoint--;
+                        }
                     } else if (token == "$start_line") {
                         if (insertionPoint > 0 && result[insertionPoint - 1] != "$line") {
                             while (insertionPoint < result.Count && result[insertionPoint] != "$line") {
@@ -311,9 +326,7 @@ namespace QEdit {
             return s.Length > 0 && ((s[0] != '$' && isIdentifier(s[0])) || Array.IndexOf(identifierModifiers, s) != -1);
         }
 
-        public static readonly int low = 0, title = 1, high = 2, concat = 3, snake = 4, hyphen = 5;
 
-        public static int defaultFirstCase = low, defaultCase = title, defaultGlue = concat;
 
         private static string mergeNames(List<string> words, int left, int right) {
             int first = defaultFirstCase, rest = defaultCase, glue = defaultGlue;
@@ -503,12 +516,14 @@ namespace QEdit {
 
             string result = formatIntoCode(words, newInsertionPoint);
 
- /*         result += Environment.NewLine + Environment.NewLine;
-            for (int i = 0; i < words.Count; i++) {
-                if (insertionPoint == i) result += ">>";
-                result += words[i] + " ";
+            if (debugWords) {
+                result += Environment.NewLine + Environment.NewLine;
+                for (int i = 0; i < words.Count; i++) {
+                    if (insertionPoint == i) result += ">>";
+                    result += words[i] + " ";
+                }
             }
-*/
+
             if (forClipboard) {
                 result = result.Replace("▪", "").Replace("□", "").Replace("■", "");
             }

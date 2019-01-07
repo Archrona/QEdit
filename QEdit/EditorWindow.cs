@@ -137,6 +137,10 @@ namespace QEdit
                 e.Handled = true;
             }
 
+            if (e.Control && e.KeyCode == Keys.D8) {
+                Program.debugWords = !Program.debugWords;
+            }
+
             if (e.Control && e.KeyCode == Keys.D9) {
                 openFileDialog1.ShowDialog();
             }
